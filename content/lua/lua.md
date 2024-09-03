@@ -1,5 +1,5 @@
 +++
-title = "lua1"
+title = "lua"
 date = 2024-09-02T13:58:55+08:00
 weight = 1
 type = "docs"
