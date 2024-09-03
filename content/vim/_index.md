@@ -1,11 +1,12 @@
 +++
-title = "vim"
-date = 2024-09-02T13:53:54+08:00
-weight = 1
-type = "docs"
+title = "Vim"
+linkTitle = "Vim"
+date = 2024-09-03T13:40:52+08:00
 description = ""
+type = "docs"
 isCJKLanguage = true
 draft = false
+[menu.main]
+    weight = 2
 
 +++
-
