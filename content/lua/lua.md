@@ -21,11 +21,13 @@ draft = false
 
 Lua engine `Lua`
 
-## INTRODUCTION
+## 简介 INTRODUCTION
 
 ### lua-intro
 
 The Lua 5.1 script engine is builtin and always available. Try this command to get an idea of what lurks beneath:
+
+​	Lua 5.1 脚本引擎是内置的并且始终可用。试试以下命令，了解它的底层机制：
 
 ```vim
 :lua vim.print(package.loaded)
@@ -33,9 +35,15 @@ The Lua 5.1 script engine is builtin and always available. Try this command to g
 
 Nvim includes a "standard library" [lua-stdlib](https://neovim.io/doc/user/lua.html#lua-stdlib) for Lua. It complements the "editor stdlib" ([builtin-functions](https://neovim.io/doc/user/builtin.html#builtin-functions) and [Ex-commands](https://neovim.io/doc/user/vimindex.html#Ex-commands)) and the [API](https://neovim.io/doc/user/api.html#API), all of which can be used from Lua code ([lua-vimscript](https://neovim.io/doc/user/lua.html#lua-vimscript) [vim.api](https://neovim.io/doc/user/lua.html#vim.api)). Together these "namespaces" form the Nvim programming interface.
 
+​	Nvim 包含一个 "标准库" [lua-stdlib](https://neovim.io/doc/user/lua.html#lua-stdlib)，用于扩展 Lua 功能。它补充了“编辑器标准库”（[内置函数](https://neovim.io/doc/user/builtin.html#builtin-functions) 和 [Ex-命令](https://neovim.io/doc/user/vimindex.html#Ex-commands)）以及 [API](https://neovim.io/doc/user/api.html#API)，所有这些都可以在 Lua 代码中使用（[lua-vimscript](https://neovim.io/doc/user/lua.html#lua-vimscript) [vim.api](https://neovim.io/doc/user/lua.html#vim.api)）。这些 "命名空间" 共同构成了 Nvim 的编程接口。
+
 Lua plugins and user config are automatically discovered and loaded, just like Vimscript. See [lua-guide](https://neovim.io/doc/user/lua-guide.html#lua-guide) for practical guidance.
 
+​	与 Vimscript 类似，Lua 插件和用户配置会自动被发现并加载。请参阅 [lua-guide](https://neovim.io/doc/user/lua-guide.html#lua-guide) 获取实用指南。
+
 You can also run Lua scripts from your shell using the [-l](https://neovim.io/doc/user/starting.html#-l) argument:
+
+​	您还可以通过使用 [-l](https://neovim.io/doc/user/starting.html#-l) 参数从命令行运行 Lua 脚本：
 
 ```
 nvim -l foo.lua [args...]
@@ -45,9 +53,13 @@ nvim -l foo.lua [args...]
 
 Lua 5.1 is the permanent interface for Nvim Lua. Plugins should target Lua 5.1 as specified in [luaref](https://neovim.io/doc/user/luaref.html#luaref); later versions (which are essentially different, incompatible, dialects) are not supported. This includes extensions such as `goto` that some Lua 5.1 interpreters like LuaJIT may support.
 
+​	Lua 5.1 是 Nvim Lua 的永久接口。插件应针对 Lua 5.1 进行开发，详见 [luaref](https://neovim.io/doc/user/luaref.html#luaref)；不支持后续版本（这些版本实际上是不同且不兼容的方言）。这包括一些 Lua 5.1 解释器（如 LuaJIT）可能支持的 `goto` 扩展。
+
 ### `lua-luajit`
 
 While Nvim officially only requires Lua 5.1 support, it should be built with LuaJIT or a compatible fork on supported platforms for performance reasons. LuaJIT also comes with useful extensions such as `ffi`, [lua-profile](https://neovim.io/doc/user/lua.html#lua-profile), and enhanced standard library functions; these cannot be assumed to be available, and Lua code in [init.lua](https://neovim.io/doc/user/starting.html#init.lua) or plugins should check the `jit` global variable before using them:
+
+​	虽然 Nvim 官方只要求支持 Lua 5.1，但在受支持的平台上应使用 LuaJIT 或兼容分支进行构建以提升性能。LuaJIT 还提供了有用的扩展，如 `ffi`、[lua-profile](https://neovim.io/doc/user/lua.html#lua-profile) 和增强的标准库函数；这些扩展可能并不总是可用，因此在 [init.lua](https://neovim.io/doc/user/starting.html#init.lua) 或插件中使用 Lua 代码时，应在使用这些扩展前检查 `jit` 全局变量：
 
 ```lua
 if jit then
@@ -61,9 +73,13 @@ end
 
 One exception is the LuaJIT `bit` extension, which is always available: when built with PUC Lua, Nvim includes a fallback implementation which provides `require("bit")`.
 
+​	一个例外是 LuaJIT 的 `bit` 扩展，它始终可用：当使用 PUC Lua 构建时，Nvim 包括了一个后备实现，可通过 `require("bit")` 调用。
+
 ### `lua-profile`
 
 If Nvim is built with LuaJIT, Lua code can be profiled via
+
+​	如果 Nvim 是使用 LuaJIT 构建的，则可以通过以下方式对 Lua 代码进行性能分析：
 
 ```lua
 -- Start a profiling session:
@@ -75,39 +91,59 @@ require('jit.p').stop()
 
 See https://luajit.org/ext_profiler.html or the `p.lua` source for details:
 
+​	请参阅 https://luajit.org/ext_profiler.html 或 `p.lua` 源代码了解详情：
+
 ```
 :lua vim.cmd.edit(package.searchpath('jit.p', package.path))
 ```
 
-## LUA CONCEPTS AND IDIOMS
+## LUA 概念与惯用法 LUA CONCEPTS AND IDIOMS
 
 ### lua-concepts
 
 Lua is very simple: this means that, while there are some quirks, once you internalize those quirks, everything works the same everywhere. Scopes (closures) in particular are very consistent, unlike JavaScript or most other languages.
 
+​	Lua 非常简单：虽然它有一些怪癖，但一旦你掌握了这些怪癖，它们在任何地方的工作方式都相同。特别是作用域（闭包）非常一致，不像 JavaScript 或大多数其他语言。
+
 Lua has three fundamental mechanisms—one for "each major aspect of programming": tables, closures, and coroutines. https://www.lua.org/doc/cacm2018.pdf
+
+​	Lua 具有三种基本机制——每一种对应编程的一个主要方面：表、闭包和协程。https://www.lua.org/doc/cacm2018.pdf
 
 Tables are the "object" or container datastructure: they represent both lists and maps, you can extend them to represent your own datatypes and change their behavior using [metatable](https://neovim.io/doc/user/luaref.html#metatable)s (like Python's "datamodel").
 
+​	表是 "对象" 或容器数据结构：它们既可以表示列表，也可以表示映射；你可以扩展它们以表示自己的数据类型，并通过 [元表](https://neovim.io/doc/user/luaref.html#metatable) 改变它们的行为（类似于 Python 的 "数据模型"）。
+
 EVERY scope in Lua is a closure: a function is a closure, a module is a closure, a `do` block ([lua-do](https://neovim.io/doc/user/luaref.html#lua-do)) is a closure--and they all work the same. A Lua module is literally just a big closure discovered on the "path" (where your modules are found: [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath)).
 
+​	Lua 中的每个作用域都是闭包：函数是闭包，模块是闭包，`do` 块（[lua-do](https://neovim.io/doc/user/luaref.html#lua-do)）是闭包——它们的工作方式都相同。Lua 模块实际上只是一个在 "路径"（你的模块存放路径：[package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath)）上被发现的大闭包。
+
 Stackful coroutines enable cooperative multithreading, generators, and versatile control for both Lua and its host (Nvim).
+
+​	栈式协程支持协作多线程、生成器和 Lua 及其宿主（Nvim）的多种控制功能。
 
 ### `iterator`
 
 An iterator is just a function that can be called repeatedly to get the "next" value of a collection (or any other [iterable](https://neovim.io/doc/user/lua.html#iterable)). This interface is expected by [for-in](https://neovim.io/doc/user/luaref.html#for-in) loops, produced by [pairs()](https://neovim.io/doc/user/luaref.html#pairs()), supported by [vim.iter](https://neovim.io/doc/user/lua.html#vim.iter), etc. https://www.lua.org/pil/7.1.html
 
+​	迭代器只是一个可以重复调用以获取集合的 "下一个" 值（或任何其他 [可迭代对象](https://neovim.io/doc/user/lua.html#iterable)）的函数。这种接口适用于 [for-in](https://neovim.io/doc/user/luaref.html#for-in) 循环，由 [pairs()](https://neovim.io/doc/user/luaref.html#pairs()) 生成，支持 [vim.iter](https://neovim.io/doc/user/lua.html#vim.iter) 等。https://www.lua.org/pil/7.1.html
+
 ### `iterable`
 
 An "iterable" is anything that [vim.iter()](https://neovim.io/doc/user/lua.html#vim.iter()) can consume: tables, dicts, lists, iterator functions, tables implementing the [__call()](https://neovim.io/doc/user/luaref.html#__call()) metamethod, and [vim.iter()](https://neovim.io/doc/user/lua.html#vim.iter()) objects.
+
+​	“可迭代对象” 是任何 [vim.iter()](https://neovim.io/doc/user/lua.html#vim.iter()) 可以消费的对象：表、字典、列表、迭代器函数、实现 [__call()](https://neovim.io/doc/user/luaref.html#__call()) 元方法的表，以及 [vim.iter()](https://neovim.io/doc/user/lua.html#vim.iter()) 对象。
 
 ### `list-iterator`
 
 Iterators on [lua-list](https://neovim.io/doc/user/lua.html#lua-list) tables have a "middle" and "end", whereas iterators in general may be logically infinite. Therefore some [vim.iter](https://neovim.io/doc/user/lua.html#vim.iter) operations (e.g. [Iter:rev()](https://neovim.io/doc/user/lua.html#Iter%3Arev())) make sense only on list-like tables (which are finite by definition).
 
+​	在 [lua-list](https://neovim.io/doc/user/lua.html#lua-list) 表上，迭代器有“中间”和“结束”两个阶段，而一般的迭代器可能逻辑上是无限的。因此，某些 [vim.iter](https://neovim.io/doc/user/lua.html#vim.iter) 操作（例如 [Iter:rev()](https://neovim.io/doc/user/lua.html#Iter%3Arev())）仅适用于类列表的表（它们按定义是有限的）。
+
 ### `lua-function-call`
 
 Lua functions can be called in multiple ways. Consider the function:
+
+​	Lua 函数可以多种方式调用。请看下面的函数：
 
 ```lua
 local foo = function(a, b)
@@ -118,6 +154,8 @@ end
 
 The first way to call this function is:
 
+​	第一种调用方式是：
+
 ```lua
 foo(1, 2)
 -- ==== Result ====
@@ -126,6 +164,8 @@ foo(1, 2)
 ```
 
 This way of calling a function is familiar from most scripting languages. In Lua, any missing arguments are passed as `nil`, and extra parameters are silently discarded. Example:
+
+​	这种调用方式在大多数脚本语言中都很常见。在 Lua 中，任何缺少的参数将作为 `nil` 传递，而多余的参数将被静默丢弃。例如：
 
 ```lua
 foo(1)
@@ -138,6 +178,8 @@ foo(1)
 
 When calling a function, you can omit the parentheses if the function takes exactly one string literal (`"foo"`) or table literal (`{1,2,3}`). The latter is often used to mimic "named parameters" ("kwargs" or "keyword args") as in languages like Python and C#. Example:
 
+​	调用函数时，如果函数只接受一个字符串字面量（`"foo"`）或表字面量（`{1,2,3}`），则可以省略括号。后者通常用于模仿其他语言中的 "命名参数"（"kwargs" 或 "关键字参数"），如 Python 和 C# 中的用法。例如：
+
 ```lua
 local func_with_opts = function(opts)
     local will_do_foo = opts.foo
@@ -149,11 +191,17 @@ func_with_opts { foo = true, filename = "hello.world" }
 
 There's nothing special going on here except that parentheses are implicitly added. But visually, this small bit of sugar gets reasonably close to a "keyword args" interface.
 
+​	这里并没有什么特别之处，只是括号被隐式地添加了。不过，从视觉上看，这种小小的语法糖让它相当接近“关键字参数”接口。
+
 ### `lua-regex`
 
 Lua intentionally does not support regular expressions, instead it has limited [lua-patterns](https://neovim.io/doc/user/luaref.html#lua-patterns) which avoid the performance pitfalls of extended regex. Lua scripts can also use Vim regex via [vim.regex()](https://neovim.io/doc/user/lua.html#vim.regex()).
 
+​	Lua 故意不支持正则表达式，而是使用有限的 [lua-patterns](https://neovim.io/doc/user/luaref.html#lua-patterns) 来避免扩展正则表达式的性能问题。Lua 脚本还可以通过 [vim.regex()](https://neovim.io/doc/user/lua.html#vim.regex()) 使用 Vim 正则表达式。
+
 Examples:
+
+​	示例：
 
 ```lua
 print(string.match("foo123bar123", "%d+"))
@@ -166,15 +214,21 @@ print(string.match("foo.bar", "%.bar"))
 -- .bar
 ```
 
-## IMPORTING LUA MODULES
+## 导入 Lua 模块 IMPORTING LUA MODULES
 
 ### lua-module-load
 
 Modules are searched for under the directories specified in ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath'), in the order they appear. Any "." in the module name is treated as a directory separator when searching. For a module `foo.bar`, each directory is searched for `lua/foo/bar.lua`, then `lua/foo/bar/init.lua`. If no files are found, the directories are searched again for a shared library with a name matching `lua/foo/bar.?`, where `?` is a list of suffixes (such as `so` or `dll`) derived from the initial value of [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath). If still no files are found, Nvim falls back to Lua's default search mechanism. The first script found is run and `require()` returns the value returned by the script if any, else `true`.
 
+​	模块会在由 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 指定的目录下按顺序进行搜索。当搜索时，模块名中的每个 "`.`" 都被视为目录分隔符。例如，对于模块 `foo.bar`，每个目录都会依次搜索 `lua/foo/bar.lua` 和 `lua/foo/bar/init.lua`。如果没有找到任何文件，接着会搜索共享库，文件名格式为 `lua/foo/bar.?`，其中 `?` 是根据 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 初始值派生的一组后缀（如 `so` 或 `dll`）。如果仍然没有找到任何文件，Nvim 将回退到 Lua 的默认搜索机制。找到的第一个脚本将被执行，并且如果脚本有返回值，`require()` 将返回该值，否则返回 `true`。
+
 The return value is cached after the first call to `require()` for each module, with subsequent calls returning the cached value without searching for, or executing any script. For further details see [require()](https://neovim.io/doc/user/luaref.html#require()).
 
+​	每个模块的第一次 `require()` 调用后，返回值将被缓存，后续调用将直接返回缓存值，而不会重新搜索或执行任何脚本。有关详细信息，请参阅 [require()](https://neovim.io/doc/user/luaref.html#require())。
+
 For example, if ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') is `foo,bar` and [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) was `./?.so;./?.dll` at startup, `require('mod')` searches these paths in order and loads the first module found ("first wins"):
+
+​	例如，如果 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 为 `foo,bar` 且启动时 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 为 `./?.so;./?.dll`，那么 `require('mod')` 将按顺序搜索这些路径，并加载找到的第一个模块（“先找到的优先”）：
 
 ```
 foo/lua/mod.lua
@@ -191,29 +245,54 @@ bar/lua/mod.dll
 
 Nvim automatically adjusts [package.path](https://neovim.io/doc/user/luaref.html#package.path) and [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) according to the effective ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') value. Adjustment happens whenever ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') is changed. `package.path` is adjusted by simply appending `/lua/?.lua` and `/lua/?/init.lua` to each directory from ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') (`/` is actually the first character of `package.config`).
 
+​	Nvim 会根据当前的 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 值自动调整 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 和 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath)。每当 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 发生变化时，都会进行调整。`package.path` 通过简单地在每个 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 目录后追加 `/lua/?.lua` 和 `/lua/?/init.lua` 进行调整（`/` 实际上是 `package.config` 的第一个字符）。
+
 Similarly to [package.path](https://neovim.io/doc/user/luaref.html#package.path), modified directories from ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') are also added to [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath). In this case, instead of appending `/lua/?.lua` and `/lua/?/init.lua` to each runtimepath, all unique `?`-containing suffixes of the existing [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) are used. Example:
 
-1. Given that
+​	与 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 类似，['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 中修改的目录也会被添加到 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 中。这种情况下，并不是将 `/lua/?.lua` 和 `/lua/?/init.lua` 追加到每个 runtimepath，而是使用现有 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 中所有包含 `?` 的后缀。示例：
+
+1. Given that 假设
 
 - ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') contains `/foo/bar,/xxx;yyy/baz,/abc`;
 
+- ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 包含 `/foo/bar,/xxx;yyy/baz,/abc`；
+
 - initial [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) (defined at compile-time or derived from `$LUA_CPATH` / `$LUA_INIT`) contains `./?.so;/def/ghi/a?d/j/g.elf;/def/?.so`.
 
+- 初始 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath)（在编译时定义或从 `$LUA_CPATH` / `$LUA_INIT` 派生）包含 `./?.so;/def/ghi/a?d/j/g.elf;/def/?.so`。
+
 2. It finds `?`-containing suffixes `/?.so`, `/a?d/j/g.elf` and `/?.so`, in order: parts of the path starting from the first path component containing question mark and preceding path separator.
-3. The suffix of `/def/?.so`, namely `/?.so` is not unique, as it’s the same as the suffix of the first path from [package.path](https://neovim.io/doc/user/luaref.html#package.path) (i.e. `./?.so`). Which leaves `/?.so` and `/a?d/j/g.elf`, in this order.
-4. ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') has three paths: `/foo/bar`, `/xxx;yyy/baz` and `/abc`. The second one contains a semicolon which is a paths separator so it is out, leaving only `/foo/bar` and `/abc`, in order.
-5. The cartesian product of paths from 4. and suffixes from 3. is taken, giving four variants. In each variant a `/lua` path segment is inserted between path and suffix, leaving:
 
-```
-/foo/bar/lua/?.so
-/foo/bar/lua/a?d/j/g.elf
-/abc/lua/?.so
-/abc/lua/a?d/j/g.elf
-```
+3. 它找到包含 `?` 的后缀 `/?.so`、`/a?d/j/g.elf` 和 `/?.so`，按顺序排列：从第一个路径组件开始，包含问号并且在路径分隔符之前的路径部分。
 
-6. New paths are prepended to the original [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath).
+4. The suffix of `/def/?.so`, namely `/?.so` is not unique, as it’s the same as the suffix of the first path from [package.path](https://neovim.io/doc/user/luaref.html#package.path) (i.e. `./?.so`). Which leaves `/?.so` and `/a?d/j/g.elf`, in this order.
+
+5. `/def/?.so` 的后缀 `/?.so` 并不唯一，因为它与 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 的第一个路径（即 `./?.so`）的后缀相同。剩下的后缀为 `/?.so` 和 `/a?d/j/g.elf`，顺序不变。
+
+6. ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') has three paths: `/foo/bar`, `/xxx;yyy/baz` and `/abc`. The second one contains a semicolon which is a paths separator so it is out, leaving only `/foo/bar` and `/abc`, in order.
+
+7. ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 有三个路径：`/foo/bar`、`/xxx;yyy/baz` 和 `/abc`。第二个路径包含分号，这会将其视为路径分隔符，因此该路径被排除，只剩下 `/foo/bar` 和 `/abc`，顺序不变。
+
+8. The cartesian product of paths from 4. and suffixes from 3. is taken, giving four variants. In each variant a `/lua` path segment is inserted between path and suffix, leaving:
+
+9. 路径（4 中的路径）与后缀（3 中的后缀）进行笛卡尔积组合，得到四种变体。在每个变体中，路径和后缀之间插入 `/lua` 路径段，得到：
+
+   ```txt
+   /foo/bar/lua/?.so
+   /foo/bar/lua/a?d/j/g.elf
+   /abc/lua/?.so
+   /abc/lua/a?d/j/g.elf
+   ```
+
+   
+
+10. New paths are prepended to the original [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath).
+
+11. 新路径会被添加到原始 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 的前面。
 
 The result will look like this:
+
+​	最终结果如下：
 
 ```
 /foo/bar,/xxx;yyy/baz,/abc ('runtimepath')
@@ -223,9 +302,15 @@ The result will look like this:
 
 **Note:**
 
+​	注意：
+
 To track ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') updates, paths added at previous update are remembered and removed at the next update, while all paths derived from the new ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') are prepended as described above. This allows removing paths when path is removed from ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath'), adding paths when they are added and reordering [package.path](https://neovim.io/doc/user/luaref.html#package.path)/|package.cpath| content if ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') was reordered.
 
+​	为了追踪 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 的更新，在前一次更新时添加的路径会被记住，并在下一次更新时删除，而所有从新的 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 派生的路径会按照上述方式添加。这允许在 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 中移除路径时相应地删除路径，添加路径时相应地添加路径，并且如果 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 重新排序，还会重新排列 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 和 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 的内容。
+
 Although adjustments happen automatically, Nvim does not track current values of [package.path](https://neovim.io/doc/user/luaref.html#package.path) or [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath). If you happen to delete some paths from there you can set ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') to trigger an update:
+
+​	虽然调整是自动进行的，但 Nvim 不会追踪当前 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 或 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 的值。如果你不小心删除了其中的一些路径，可以通过设置 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 来触发更新：
 
 ```vim
 let &runtimepath = &runtimepath
@@ -233,19 +318,31 @@ let &runtimepath = &runtimepath
 
 Skipping paths from ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') which contain semicolons applies both to [package.path](https://neovim.io/doc/user/luaref.html#package.path) and [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath). Given that there are some badly written plugins using shell, which will not work with paths containing semicolons, it is better to not have them in ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') at all.
 
-## COMMANDS 
+​	包含分号的 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 路径在 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 和 [package.cpath](https://neovim.io/doc/user/luaref.html#package.cpath) 中都会被跳过。鉴于有些编写不佳的插件使用了 shell 脚本，而这些脚本无法处理包含分号的路径，因此最好不要在 ['runtimepath'](https://neovim.io/doc/user/options.html#'runtimepath') 中包含它们。
+
+## 命令 COMMANDS 
 
 ### lua-commands
 
 These commands execute a Lua chunk from either the command line (:lua, :luado) or a file (:luafile) on the given line [range]. As always in Lua, each chunk has its own scope (closure), so only global variables are shared between command calls. The [lua-stdlib](https://neovim.io/doc/user/lua.html#lua-stdlib) modules, user modules, and anything else on [package.path](https://neovim.io/doc/user/luaref.html#package.path) are available.
 
+​	这些命令可以从命令行（`:lua`, `:luado`）或文件（`:luafile`）执行一个 Lua 代码块，针对指定的行范围 `[range]`。与往常一样，在 Lua 中，每个代码块都有自己的作用域（闭包），因此只有全局变量在命令调用之间共享。[lua-stdlib](https://neovim.io/doc/user/lua.html#lua-stdlib) 模块、用户模块以及 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 中的其他内容都可用。
+
 The Lua print() function redirects its output to the Nvim message area, with arguments separated by " " (space) instead of "\t" (tab).
+
+​	Lua 的 `print()` 函数会将其输出重定向到 Nvim 的消息区域，参数之间用空格 `" "` 分隔，而不是制表符 `"\t"`。
 
 #### `:lua=`
 
-``:lua` :lua `{chunk}` Executes Lua chunk `{chunk}`. If `{chunk}` starts with "=" the rest of the chunk is evaluated as an expression and printed. `:lua =expr` and `:=expr` are equivalent to `:lua vim.print(expr)`.
+`:lua` :lua `{chunk}` 
+
+Executes Lua chunk `{chunk}`. If `{chunk}` starts with "=" the rest of the chunk is evaluated as an expression and printed. `:lua =expr` and `:=expr` are equivalent to `:lua vim.print(expr)`.
+
+​	执行 Lua 代码块 `{chunk}`。如果 `{chunk}` 以 `=` 开头，那么代码块的其余部分将作为表达式进行求值并打印出来。`:lua =expr` 和 `:=expr` 等同于 `:lua vim.print(expr)`。
 
 Examples:
+
+​	示例：
 
 ```vim
 :lua vim.api.nvim_command('echo "Hello, Nvim!"')
@@ -253,26 +350,46 @@ Examples:
 
 To see the Lua version:
 
+​	查看 Lua 版本：
+
 ```vim
 :lua print(_VERSION)
 ```
 
 To see the LuaJIT version:
 
+​	查看 LuaJIT 版本：
+
 ```vim
 :lua =jit.version
 ```
 
-:{range}lua Executes buffer lines in `{range}` as Lua code. Unlike [:source](https://neovim.io/doc/user/repeat.html#%3Asource), this always treats the lines as Lua code.
+#### :{range}lua 
+
+Executes buffer lines in `{range}` as Lua code. Unlike [:source](https://neovim.io/doc/user/repeat.html#%3Asource), this always treats the lines as Lua code.
+
+​	将缓冲区中的 `{range}` 行作为 Lua 代码执行。与[:source](https://neovim.io/doc/user/repeat.html#%3Asource)不同的是，这总是将这些行视为 Lua 代码。
 
 Example: select the following code and type ":lua<Enter>" to execute it:
+
+​	示例：选择以下代码并输入 `:lua<Enter>` 以执行它：
 
 ```lua
 print(string.format(
     'unix time: %s', os.time()))
 ```
 
-`:lua-heredoc`:lua << [trim] [`{endmarker}`] `{script}` `{endmarker}` Executes Lua script `{script}` from within Vimscript. You can omit [endmarker] after the "<<" and use a dot "." after `{script}` (similar to [:append](https://neovim.io/doc/user/insert.html#%3Aappend), [:insert](https://neovim.io/doc/user/insert.html#%3Ainsert)). Refer to [:let-heredoc](https://neovim.io/doc/user/eval.html#%3Alet-heredoc) for more information.
+#### `:lua-heredoc`
+
+:lua << [trim] [`{endmarker}`] 
+
+`{script}`
+
+ `{endmarker}` 
+
+Executes Lua script `{script}` from within Vimscript. You can omit [endmarker] after the "<<" and use a dot "." after `{script}` (similar to [:append](https://neovim.io/doc/user/insert.html#%3Aappend), [:insert](https://neovim.io/doc/user/insert.html#%3Ainsert)). Refer to [:let-heredoc](https://neovim.io/doc/user/eval.html#%3Alet-heredoc) for more information.
+
+​	从 Vimscript 内部执行 Lua 脚本 `{script}`。可以在 `<<` 后省略 [endmarker]，并在 `{script}` 之后使用一个点 "."（类似于[:append](https://neovim.io/doc/user/insert.html#%3Aappend)和[:insert](https://neovim.io/doc/user/insert.html#%3Ainsert)）。更多信息请参考[:let-heredoc](https://neovim.io/doc/user/eval.html#%3Alet-heredoc)。
 
 Example:
 
@@ -288,9 +405,19 @@ endfunction
 
 Note that the `local` variables will disappear when the block finishes. But not globals.
 
-`:luado`:[range]luado `{body}` Executes Lua chunk "function(line, linenr) `{body}` end" for each buffer line in [range], where `line` is the current line text (without `<EOL>`), and `linenr` is the current line number. If the function returns a string that becomes the text of the corresponding buffer line. Default [range] is the whole file: "1,$".
+​	请注意，当代码块结束时，`local` 变量将会消失，但全局变量不会。
+
+#### `:luado`
+
+:[range]luado `{body}` 
+
+Executes Lua chunk "function(line, linenr) `{body}` end" for each buffer line in [range], where `line` is the current line text (without `<EOL>`), and `linenr` is the current line number. If the function returns a string that becomes the text of the corresponding buffer line. Default [range] is the whole file: "1,$".
+
+​	为 `[range]` 中的每一行执行 Lua 代码块 `function(line, linenr) `{body}` end`，其中 `line` 是当前行的文本（不包括 `<EOL>`），`linenr` 是当前行号。如果函数返回一个字符串，该字符串将成为对应缓冲区行的文本。默认 `[range]` 是整个文件："1,$"。
 
 Examples:
+
+​	示例：
 
 ```vim
 :luado return string.format("%s\t%d", line:reverse(), #line)
@@ -300,9 +427,17 @@ Examples:
 :luado if bp:match(line) then return "=>\t" .. line end
 ```
 
-`:luafile`:luafile `{file}` Execute Lua script in `{file}`. The whole argument is used as the filename (like [:edit](https://neovim.io/doc/user/editing.html#%3Aedit)), spaces do not need to be escaped. Alternatively you can [:source](https://neovim.io/doc/user/repeat.html#%3Asource) Lua files.
+#### `:luafile`
+
+:luafile `{file}` 
+
+Execute Lua script in `{file}`. The whole argument is used as the filename (like [:edit](https://neovim.io/doc/user/editing.html#%3Aedit)), spaces do not need to be escaped. Alternatively you can [:source](https://neovim.io/doc/user/repeat.html#%3Asource) Lua files.
+
+​	执行 `{file}` 中的 Lua 脚本。整个参数会被用作文件名（类似于[:edit](https://neovim.io/doc/user/editing.html#%3Aedit)），空格不需要转义。或者，你也可以用[:source](https://neovim.io/doc/user/repeat.html#%3Asource)来加载 Lua 文件。
 
 Examples:
+
+​	示例：
 
 ```vim
 :luafile script.lua
@@ -315,6 +450,8 @@ Examples:
 
 The (dual) equivalent of "vim.eval" for passing Lua values to Nvim is "luaeval". "luaeval" takes an expression string and an optional argument used for _A inside expression and returns the result of the expression. It is semantically equivalent in Lua to:
 
+​	与 "vim.eval" 用于将 Lua 值传递给 Nvim 的双重等价物是 "luaeval"。luaeval 接受一个表达式字符串和一个可选参数，该参数在表达式中用作 _A，并返回表达式的结果。这在 Lua 中语义上等同于：
+
 ```lua
 local chunkheader = "local _A = select(1, ...) return "
 function luaeval (expstr, arg)
@@ -325,7 +462,11 @@ end
 
 Lua nils, numbers, strings, tables and booleans are converted to their respective Vimscript types. If a Lua string contains a NUL byte, it will be converted to a [Blob](https://neovim.io/doc/user/eval.html#Blob). Conversion of other Lua types is an error.
 
+​	Lua 的 nil、数字、字符串、表和布尔值会转换为相应的 Vimscript 类型。如果 Lua 字符串包含 NUL 字节，它将转换为 [Blob](https://neovim.io/doc/user/eval.html#Blob)。转换其他 Lua 类型将会出错。
+
 The magic global "_A" contains the second argument to luaeval().
+
+​	全局变量 "_A" 包含传递给 luaeval() 的第二个参数。
 
 Example:
 
@@ -336,15 +477,41 @@ Example:
 " foo
 ```
 
-`lua-table-ambiguous`Lua tables are used as both dictionaries and lists, so it is impossible to decide whether empty table is a list or a dict. Also Lua does not have integer numbers. To disambiguate these cases, we define: `lua-list`0. Empty table is a list. Use [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict()) to represent empty dict. 1. Table with N consecutive (no `nil` values, aka "holes") integer keys 1…N is a list. See also [list-iterator](https://neovim.io/doc/user/lua.html#list-iterator). `lua-dict`2. Table with string keys, none of which contains NUL byte, is a dict. 3. Table with string keys, at least one of which contains NUL byte, is also considered to be a dictionary, but this time it is converted to a [msgpack-special-map](https://neovim.io/doc/user/builtin.html#msgpack-special-map). `lua-special-tbl`4. Table with `vim.type_idx` key may be a dictionary, a list or floating-point value:
+### `lua-table-ambiguous`
 
-`{[vim.type_idx]=vim.types.float, [vim.val_idx]=1}` is converted to a floating-point 1.0. Note that by default integral Lua numbers are converted to [Number](https://neovim.io/doc/user/eval.html#Number)s, non-integral are converted to [Float](https://neovim.io/doc/user/eval.html#Float)s. This variant allows integral [Float](https://neovim.io/doc/user/eval.html#Float)s.
+Lua tables are used as both dictionaries and lists, so it is impossible to decide whether empty table is a list or a dict. Also Lua does not have integer numbers. To disambiguate these cases, we define: 
 
-`{[vim.type_idx]=vim.types.dictionary}` is converted to an empty dictionary, `{[vim.type_idx]=vim.types.dictionary, [42]=1, a=2}` is converted to a dictionary `{'a': 42}`: non-string keys are ignored. Without `vim.type_idx` key tables with keys not fitting in 1., 2. or 3. are errors.
+​	Lua 表在 Lua 中既可以用作字典，也可以用作列表，因此无法确定空表是列表还是字典。此外，Lua 没有整数类型。为了区分这些情况，我们做了以下定义：
 
-`{[vim.type_idx]=vim.types.array}` is converted to an empty list. As well as `{[vim.type_idx]=vim.types.array, [42]=1}`: integral keys that do not form a 1-step sequence from 1 to N are ignored, as well as all non-integral keys.
+`lua-list` 
+
+- Empty table is a list. Use [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict()) to represent empty dict. 
+- 空表被视为列表。使用 [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict()) 表示空字典。
+- Table with N consecutive (no `nil` values, aka "holes") integer keys 1…N is a list. See also [list-iterator](https://neovim.io/doc/user/lua.html#list-iterator). 
+- 如果表具有 N 个连续的（没有 `nil` 值，即没有“空洞”）整数键 1…N，那么它是一个列表。参见 [list-iterator](https://neovim.io/doc/user/lua.html#list-iterator)。
+
+`lua-dict`  
+
+- Table with string keys, none of which contains NUL byte, is a dict. 
+- 如果表的键是字符串，且其中没有包含 NUL 字节的键，那么它是一个字典。
+
+- Table with string keys, at least one of which contains NUL byte, is also considered to be a dictionary, but this time it is converted to a [msgpack-special-map](https://neovim.io/doc/user/builtin.html#msgpack-special-map). 
+- 如果表的键是字符串，且至少有一个键包含 NUL 字节，那么它也被视为字典，但这次它会被转换为 [msgpack-special-map](https://neovim.io/doc/user/builtin.html#msgpack-special-map)。
+
+`lua-special-tbl` 
+
+- Table with `vim.type_idx` key may be a dictionary, a list or floating-point value:
+- 含有 `vim.type_idx` 键的表可能是字典、列表或浮点数：
+  - `{[vim.type_idx]=vim.types.float, [vim.val_idx]=1}` is converted to a floating-point 1.0. Note that by default integral Lua numbers are converted to [Number](https://neovim.io/doc/user/eval.html#Number)s, non-integral are converted to [Float](https://neovim.io/doc/user/eval.html#Float)s. This variant allows integral [Float](https://neovim.io/doc/user/eval.html#Float)s.
+  - `{[vim.type_idx]=vim.types.float, [vim.val_idx]=1}` 被转换为浮点数 1.0。注意，默认情况下，整数 Lua 数字会被转换为 [Number](https://neovim.io/doc/user/eval.html#Number)，非整数则被转换为 [Float](https://neovim.io/doc/user/eval.html#Float)。这种变体允许将整数转换为 [Float](https://neovim.io/doc/user/eval.html#Float)。
+  - `{[vim.type_idx]=vim.types.dictionary}` is converted to an empty dictionary, `{[vim.type_idx]=vim.types.dictionary, [42]=1, a=2}` is converted to a dictionary `{'a': 42}`: non-string keys are ignored. Without `vim.type_idx` key tables with keys not fitting in 1., 2. or 3. are errors.
+  - `{[vim.type_idx]=vim.types.dictionary}` 被转换为空字典，`{[vim.type_idx]=vim.types.dictionary, [42]=1, a=2}` 被转换为字典 `{'a': 42}`：非字符串键会被忽略。没有 `vim.type_idx` 键的表，如果键不符合上述 1、2 或 3 中的任意一种情况，则会报错。
+  - `{[vim.type_idx]=vim.types.array}` is converted to an empty list. As well as `{[vim.type_idx]=vim.types.array, [42]=1}`: integral keys that do not form a 1-step sequence from 1 to N are ignored, as well as all non-integral keys.
+  - `{[vim.type_idx]=vim.types.array}` 被转换为空列表。类似地，`{[vim.type_idx]=vim.types.array, [42]=1}`：不形成从 1 到 N 的 1 步长序列的整数键会被忽略，所有非整数键也会被忽略。
 
 Examples:
+
+​	示例：
 
 ```vim
 :echo luaeval('math.pi')
@@ -356,11 +523,15 @@ Examples:
 
 **Note:** Second argument to `luaeval` is converted ("marshalled") from Vimscript to Lua, so changes to Lua containers do not affect values in Vimscript. Return value is also always converted. When converting, [msgpack-special-dict](https://neovim.io/doc/user/builtin.html#msgpack-special-dict)s are treated specially.
 
-## Vimscript v:lua interface
+​	**注意：** `luaeval` 的第二个参数会从 Vimscript 转换（“编组”）为 Lua，因此对 Lua 容器的更改不会影响 Vimscript 中的值。返回值也总是会被转换。在转换过程中，[msgpack-special-dict](https://neovim.io/doc/user/builtin.html#msgpack-special-dict) 会被特殊处理。
+
+## Vimscript v:lua接口 Vimscript v:lua interface
 
 ### v:lua-call
 
 From Vimscript the special `v:lua` prefix can be used to call Lua functions which are global or accessible from global tables. The expression
+
+​	在 Vimscript 中，可以使用特殊的 `v:lua` 前缀来调用全局的 Lua 函数或从全局表中可访问的 Lua 函数。表达式
 
 ```vim
 call v:lua.func(arg1, arg2)
@@ -368,11 +539,15 @@ call v:lua.func(arg1, arg2)
 
 is equivalent to the Lua chunk
 
+​	相当于以下 Lua 代码块：
+
 ```lua
 return func(...)
 ```
 
 where the args are converted to Lua values. The expression
+
+​	其中参数将被转换为 Lua 值。表达式
 
 ```vim
 call v:lua.somemod.func(args)
@@ -380,11 +555,15 @@ call v:lua.somemod.func(args)
 
 is equivalent to the Lua chunk
 
+​	相当于以下 Lua 代码块：
+
 ```lua
 return somemod.func(...)
 ```
 
 In addition, functions of packages can be accessed like
+
+​	此外，还可以像下面这样访问包中的函数：
 
 ```vim
 call v:lua.require'mypack'.func(arg1, arg2)
@@ -393,13 +572,19 @@ call v:lua.require'mypack.submod'.func(arg1, arg2)
 
 **Note:** Only single quote form without parens is allowed. Using `require"mypack"` or `require('mypack')` as prefixes do NOT work (the latter is still valid as a function call of itself, in case require returns a useful value).
 
+​	**注意：** 只能使用不带括号的单引号形式。使用 `require"mypack"` 或 `require('mypack')` 作为前缀不起作用（后者仍然有效，作为函数调用本身，假如 `require` 返回了一个有用的值）。	
+
 The `v:lua` prefix may be used to call Lua functions as [method](https://neovim.io/doc/user/eval.html#method)s. For example:
+
+​	`v:lua` 前缀可以用于调用 Lua 函数作为[方法](https://neovim.io/doc/user/eval.html#method)调用。例如：
 
 ```vim
 :eval arg1->v:lua.somemod.func(arg2)
 ```
 
 You can use `v:lua` in "func" options like ['tagfunc'](https://neovim.io/doc/user/options.html#'tagfunc'), ['omnifunc'](https://neovim.io/doc/user/options.html#'omnifunc'), etc. For example consider the following Lua omnifunc handler:
+
+​	你可以在类似 ['tagfunc'](https://neovim.io/doc/user/options.html#'tagfunc') 和 ['omnifunc'](https://neovim.io/doc/user/options.html#'omnifunc') 的 "func" 选项中使用 `v:lua`。例如，以下是一个 Lua omnifunc 处理函数：
 
 ```lua
 function mymod.omnifunc(findstart, base)
@@ -414,7 +599,11 @@ vim.bo[buf].omnifunc = 'v:lua.mymod.omnifunc'
 
 **Note:** The module ("mymod" in the above example) must either be a Lua global, or use require() as shown above to access it from a package.
 
+​	**注意：** 模块（上例中的 "mymod"）必须是全局的 Lua 模块，或者使用如上所示的 `require()` 以从包中访问它。
+
 **Note:** `v:lua` without a call is not allowed in a Vimscript expression: [Funcref](https://neovim.io/doc/user/eval.html#Funcref)s cannot represent Lua functions. The following are errors:
+
+​	**注意：** 在 Vimscript 表达式中不能仅使用 `v:lua` 而不进行调用： [Funcref](https://neovim.io/doc/user/eval.html#Funcref) 不能表示 Lua 函数。以下是错误的：
 
 ```vim
 let g:Myvar = v:lua.myfunc        " Error
@@ -423,19 +612,25 @@ let g:foo = v:lua                 " Error
 let g:foo = v:['lua']             " Error
 ```
 
-## Lua standard modules
+## Lua 标准模块 Lua standard modules
 
 ### lua-stdlib
 
 The Nvim Lua "standard library" (stdlib) is the `vim` module, which exposes various functions and sub-modules. It is always loaded, thus `require("vim")` is unnecessary.
 
+​	Nvim 的 Lua "标准库"（stdlib）是 `vim` 模块，它公开了各种函数和子模块。此模块总是加载的，因此无需 `require("vim")`。
+
 You can peek at the module properties:
+
+​	你可以查看模块的属性：
 
 ```vim
 :lua vim.print(vim)
 ```
 
 Result is something like this:
+
+​	结果类似如下：
 
 ```
 {
@@ -455,11 +650,15 @@ Result is something like this:
 
 To find documentation on e.g. the "deepcopy" function:
 
+​	要查找例如 "deepcopy" 函数的文档：
+
 ```vim
 :help vim.deepcopy()
 ```
 
 Note that underscore-prefixed functions (e.g. "_os_proc_children") are internal/private and must not be used by plugins.
+
+​	请注意，下划线前缀的函数（例如 "_os_proc_children"）是内部/私有函数，插件不应使用。
 
 ### VIM.UV 
 
@@ -467,11 +666,15 @@ Note that underscore-prefixed functions (e.g. "_os_proc_children") are internal/
 
 `vim.uv` exposes the "luv" Lua bindings for the libUV library that Nvim uses for networking, filesystem, and process management, see [luvref.txt](https://neovim.io/doc/user/luvref.html#luvref.txt). In particular, it allows interacting with the main Nvim [luv-event-loop](https://neovim.io/doc/user/luvref.html#luv-event-loop).
 
+​	`vim.uv` 模块公开了 Nvim 用于网络、文件系统和进程管理的 libUV 库的 "luv" Lua 绑定，详见 [luvref.txt](https://neovim.io/doc/user/luvref.html#luvref.txt)。特别是，它允许与 Nvim 的主 [luv-event-loop](https://neovim.io/doc/user/luvref.html#luv-event-loop) 进行交互。
+
 #### `E5560` 
 
 `lua-loop-callbacks` 
 
 It is an error to directly invoke `vim.api` functions (except [api-fast](https://neovim.io/doc/user/api.html#api-fast)) in `vim.uv` callbacks. For example, this is an error:
+
+​	在 `vim.uv` 回调中直接调用 `vim.api` 函数（除了 [api-fast](https://neovim.io/doc/user/api.html#api-fast)）会出错。例如，以下是错误的：
 
 ```lua
 local timer = vim.uv.new_timer()
@@ -482,6 +685,8 @@ end)
 
 To avoid the error use [vim.schedule_wrap()](https://neovim.io/doc/user/lua.html#vim.schedule_wrap()) to defer the callback:
 
+​	为了避免此错误，请使用 [vim.schedule_wrap()](https://neovim.io/doc/user/lua.html#vim.schedule_wrap()) 来推迟回调的执行：
+
 ```lua
 local timer = vim.uv.new_timer()
 timer:start(1000, 0, vim.schedule_wrap(function()
@@ -491,17 +696,28 @@ end))
 
 (For one-shot timers, see [vim.defer_fn()](https://neovim.io/doc/user/lua.html#vim.defer_fn()), which automatically adds the wrapping.)
 
-Example: repeating timer 1. Save this code to a file. 2. Execute it with ":luafile %".
+​	（对于一次性计时器，请参阅 [vim.defer_fn()](https://neovim.io/doc/user/lua.html#vim.defer_fn())，它会自动添加包装。）
+
+Example: repeating timer 
+
+​	示例：重复计时器
+
+1. Save this code to a file. 
+2. 将此代码保存到文件中。
+3. Execute it with ":luafile %".
+4. 使用":luafile %"执行它。
 
 ```lua
 -- Create a timer handle (implementation detail: uv_timer_t).
+-- 创建一个计时器句柄（实现细节：uv_timer_t）。
 local timer = vim.uv.new_timer()
 local i = 0
 -- Waits 1000ms, then repeats every 750ms until timer:close().
+-- 等待 1000ms，然后每 750ms 重复，直到 timer:close()。
 timer:start(1000, 750, function()
   print('timer invoked! i='..tostring(i))
   if i > 4 then
-    timer:close()  -- Always close handles to avoid leaks.
+    timer:close()  -- Always close handles to avoid leaks. 始终关闭句柄以避免内存泄漏。
   end
   i = i + 1
 end)
@@ -510,7 +726,20 @@ print('sleeping');
 
 #### `watch-file`
 
-Example: File-change detection 1. Save this code to a file. 2. Execute it with ":luafile %". 3. Use ":Watch %" to watch any file. 4. Try editing the file from another text editor. 5. Observe that the file reloads in Nvim (because on_change() calls [:checktime](https://neovim.io/doc/user/editing.html#%3Achecktime)).
+Example: File-change detection 
+
+​	示例：文件更改检测
+
+1. Save this code to a file. 
+2. 将此代码保存到文件中。
+3.  Execute it with ":luafile %". 
+4. 使用":luafile %"执行它。
+5. Use ":Watch %" to watch any file. 
+6. 使用":Watch %"来监视任何文件。
+7. Try editing the file from another text editor. 
+8. 尝试从另一个文本编辑器中编辑文件。
+9. Observe that the file reloads in Nvim (because on_change() calls [:checktime](https://neovim.io/doc/user/editing.html#%3Achecktime)).
+10. 观察文件在 Nvim 中重新加载（因为 on_change() 调用了[:checktime](https://neovim.io/doc/user/editing.html#%3Achecktime)）。
 
 ```lua
 local w = vim.uv.new_fs_event()
@@ -535,15 +764,33 @@ vim.api.nvim_command(
 
 When on Linux you may need to increase the maximum number of `inotify` watches and queued events as the default limit can be too low. To increase the limit, run:
 
+​	在 Linux 上，你可能需要增加 `inotify` 监视器和排队事件的最大数量，因为默认限制可能过低。要增加限制，请运行：
+
 ```sh
 sysctl fs.inotify.max_user_watches=494462
 ```
 
 This will increase the limit to 494462 watches and queued events. These lines can be added to `/etc/sysctl.conf` to make the changes persistent.
 
+​	这将限制增加到 494462 个监视器和排队事件。可以将这些行添加到 `/etc/sysctl.conf` 中以使更改永久生效。
+
 Note that each watch is a structure in the Kernel, thus available memory is also a bottleneck for using inotify. In fact, a watch can take up to 1KB of space. This means a million watches could result in 1GB of extra RAM usage.
 
-Example: TCP echo-server `tcp-server`1. Save this code to a file. 2. Execute it with ":luafile %". 3. Note the port number. 4. Connect from any TCP client (e.g. "nc 0.0.0.0 36795"):
+​	请注意，每个监视器都是内核中的一个结构，因此可用内存也是使用 inotify 的瓶颈。事实上，一个监视器可能占用多达 1KB 的空间。这意味着一百万个监视器可能会导致 1GB 的额外内存使用。
+
+Example: TCP echo-server `tcp-server`
+
+​	示例：TCP 回显服务器
+
+1. Save this code to a file. 
+
+1. 将此代码保存到文件中。
+2. Execute it with ":luafile %". 
+3. 使用":luafile %"执行它。
+4. Note the port number. 
+5. 记下端口号。
+6. Connect from any TCP client (e.g. "nc 0.0.0.0 36795"):
+7. 从任何 TCP 客户端连接（例如 "nc 0.0.0.0 36795"）：
 
 ```lua
 local function create_server(host, port, on_connect)
@@ -570,26 +817,38 @@ end)
 print('TCP echo-server listening on port: '..server:getsockname().port)
 ```
 
-#### Multithreading
+#### 多线程 Multithreading
 
 `lua-loop-threading`
 
 Plugins can perform work in separate (os-level) threads using the threading APIs in luv, for instance `vim.uv.new_thread`. Note that every thread gets its own separate Lua interpreter state, with no access to Lua globals in the main thread. Neither can the state of the editor (buffers, windows, etc) be directly accessed from threads.
 
+​	插件可以使用 luv 中的线程 API（例如 `vim.uv.new_thread`）在独立的操作系统级别线程中执行工作。请注意，每个线程都有自己独立的 Lua 解释器状态，无法访问主线程中的 Lua 全局变量。同样，编辑器的状态（缓冲区、窗口等）也无法直接从线程中访问。
+
 A subset of the `vim.*` API is available in threads. This includes:
 
+​	线程中可以使用一部分 `vim.*` API，包括：
+
 - `vim.uv` with a separate event loop per thread.
+- `vim.uv`，每个线程都有一个独立的事件循环。
 
 - `vim.mpack` and `vim.json` (useful for serializing messages between threads)
 
+- `vim.mpack` 和 `vim.json`（对于在线程之间序列化消息很有用）。
+
 - `require` in threads can use Lua packages from the global [package.path](https://neovim.io/doc/user/luaref.html#package.path)
+- 线程中的 `require` 可以使用全局 [package.path](https://neovim.io/doc/user/luaref.html#package.path) 中的 Lua 包。
 - `print()` and `vim.inspect`
+- `print()` 和 `vim.inspect`。
 - `vim.diff`
 
 - most utility functions in `vim.*` for working with pure Lua values like `vim.split`, `vim.tbl_*`, `vim.list_*`, and so on.
 
+- 大多数用于处理纯 Lua 值的 `vim.*` 工具函数，例如 `vim.split`，`vim.tbl_*`，`vim.list_*` 等等。
+
 
 - `vim.is_thread()` returns true from a non-main thread.
+- `vim.is_thread()` 返回非主线程时为 true。
 
 ## VIM.HIGHLIGHT
 
@@ -601,7 +860,11 @@ A subset of the `vim.*` API is available in threads. This includes:
 
 Highlight the yanked text during a [TextYankPost](https://neovim.io/doc/user/autocmd.html#TextYankPost) event.
 
+​	在 [TextYankPost](https://neovim.io/doc/user/autocmd.html#TextYankPost) 事件期间高亮显示被 yank 的文本。
+
 Add the following to your `init.vim`:
+
+​	将以下内容添加到你的 `init.vim` 中：
 
 ```vim
 autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup='Visual', timeout=300}
@@ -609,36 +872,72 @@ autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup='Visual', time
 
 Parameters:
 
-`{opts}` (`table?`) Optional parameters
+- `{opts}` (`table?`) Optional parameters:
+- `{opts}` (`table?`) 可选参数：
+  - `higroup` highlight group for yanked region (default "IncSearch")
+  - `higroup` 高亮组，用于 yank 的区域（默认值为 `"IncSearch"`）。
+  - `timeout` time in ms before highlight is cleared (default 150)
+  - `timeout` 高亮清除前的时间（以毫秒为单位，默认值为 150）。
+  - `on_macro` highlight when executing macro (default false)
+  - `on_macro` 执行宏时是否高亮（默认值为 false）。
+  - `on_visual` highlight when yanking visual selection (default true)
+  - `on_visual` 选择可视区域 yank 时是否高亮（默认值为 true）。
+  - `event` event structure (default vim.v.event)
+  - `event` 事件结构（默认值为 `vim.v.event`）。
+  - `priority` integer priority (default [vim.highlight.priorities](https://neovim.io/doc/user/lua.html#vim.highlight.priorities)`.user`)
+  - `priority` 整数优先级（默认值为 [vim.highlight.priorities](https://neovim.io/doc/user/lua.html#vim.highlight.priorities)`.user`）。
 
-- higroup highlight group for yanked region (default "IncSearch")
-- timeout time in ms before highlight is cleared (default 150)
-- on_macro highlight when executing macro (default false)
-- on_visual highlight when yanking visual selection (default true)
-- event event structure (default vim.v.event)
-- priority integer priority (default [vim.highlight.priorities](https://neovim.io/doc/user/lua.html#vim.highlight.priorities)`.user`)
+#### vim.highlight.priorities 
 
-vim.highlight.priorities `vim.highlight.priorities`Table with default priorities used for highlighting:
+`vim.highlight.priorities`
+
+Table with default priorities used for highlighting:
+
+​	表包含用于高亮显示的默认优先级：
 
 - `syntax`: `50`, used for standard syntax highlighting
+- `syntax`: `50`，用于标准语法高亮。
 - `treesitter`: `100`, used for treesitter-based highlighting
+- `treesitter`: `100`，用于基于 treesitter 的高亮。
 - `semantic_tokens`: `125`, used for LSP semantic token highlighting
+- `semantic_tokens`: `125`，用于 LSP 语义标记高亮。
 - `diagnostics`: `150`, used for code analysis such as diagnostics
+- `diagnostics`: `150`，用于代码分析（如诊断）。
 - `user`: `200`, used for user-triggered highlights such as LSP document symbols or `on_yank` autocommands
+- `user`: `200`，用于用户触发的高亮显示，例如 LSP 文档符号或 `on_yank` 自动命令。
 
-`vim.highlight.range()`vim.highlight.range(`{bufnr}`, `{ns}`, `{higroup}`, `{start}`, `{finish}`, `{opts}`) Apply highlight group to range of text.
+
+
+#### vim.highlight.range(`{bufnr}`, `{ns}`, `{higroup}`, `{start}`, `{finish}`, `{opts}`) 
+
+`vim.highlight.range()`
+
+Apply highlight group to range of text.
+
+​	将高亮组应用于文本范围。
 
 Parameters:
 
+​	参数：
+
 - `{bufnr}` (`integer`) Buffer number to apply highlighting to
+- `{bufnr}` (`integer`) 要应用高亮的缓冲区编号。
 - `{ns}` (`integer`) Namespace to add highlight to
+- `{ns}` (`integer`) 添加高亮的命名空间。
 - `{higroup}` (`string`) Highlight group to use for highlighting
+- `{higroup}` (`string`) 用于高亮的高亮组。
 - `{start}` (`integer[]|string`) Start of region as a (line, column) tuple or string accepted by [getpos()](https://neovim.io/doc/user/builtin.html#getpos())
+- `{start}` (`integer[]|string`) 区域的起始位置，可以是（行，列）的元组或 [getpos()](https://neovim.io/doc/user/builtin.html#getpos()) 接受的字符串。
 - `{finish}` (`integer[]|string`) End of region as a (line, column) tuple or string accepted by [getpos()](https://neovim.io/doc/user/builtin.html#getpos())
+- `{finish}` (`integer[]|string`) 区域的结束位置，可以是（行，列）的元tuple或 [getpos()](https://neovim.io/doc/user/builtin.html#getpos()) 接受的字符串。
 - `{opts}` (`table?`) A table with the following fields:
+- `{opts}` (`table?`) 包含以下字段的表：
   - `{regtype}` (`string`, default: `'v'` i.e. charwise) Type of range. See [getregtype()](https://neovim.io/doc/user/builtin.html#getregtype())
+  - `{regtype}` (`string`, 默认值：`'v'`，即按字符范围）范围的类型。参见 [getregtype()](https://neovim.io/doc/user/builtin.html#getregtype())。
   - `{inclusive}` (`boolean`, default: `false`) Indicates whether the range is end-inclusive
+  - `{inclusive}` (`boolean`, 默认值：`false`）指示范围是否包含结束点。
   - `{priority}` (`integer`, default: `vim.highlight.priorities.user`) Indicates priority of highlight
+  - `{priority}` (`integer`, 默认值：`vim.highlight.priorities.user`）指示高亮显示的优先级。
 
 ## VIM.DIFF
 
@@ -649,6 +948,8 @@ Parameters:
 `vim.diff()`
 
 Run diff on strings `{a}` and `{b}`. Any indices returned by this function, either directly or via callback arguments, are 1-based.
+
+​	对字符串 `{a}` 和 `{b}` 进行差异比较。该函数返回的任何索引（无论是直接返回还是通过回调参数返回）都是从 1 开始的。
 
 Examples:
 
@@ -669,34 +970,61 @@ vim.diff('a\n', 'b\nc\n', {result_type = 'indices'})
 Parameters:
 
 - `{a}` (`string`) First string to compare
+- `{a}` (`string`) 第一个要比较的字符串
 - `{b}` (`string`) Second string to compare
+- `{b}` (`string`) 第二个要比较的字符串
 - `{opts}` (`table`) Optional parameters:
+- `{opts}` (`table`) 可选参数：
   - `{on_hunk}` (`fun(start_a: integer, count_a: integer, start_b: integer, count_b: integer): integer`) Invoked for each hunk in the diff. Return a negative number to cancel the callback for any remaining hunks. Arguments:
+  - `{on_hunk}` (`fun(start_a: integer, count_a: integer, start_b: integer, count_b: integer): integer`) 对差异块的每个部分进行回调。如果返回负数，则取消回调剩余部分。参数：
     - `start_a` (`integer`): Start line of hunk in `{a}`.
+    - `start_a` (`integer`): 差异块在 `{a}` 中的起始行。
     - `count_a` (`integer`): Hunk size in `{a}`.
+    - `count_a` (`integer`): `{a}` 中差异块的大小。
     - `start_b` (`integer`): Start line of hunk in `{b}`.
+    - `start_b` (`integer`): 差异块在 `{b}` 中的起始行。
     - `count_b` (`integer`): Hunk size in `{b}`.
+    - `count_b` (`integer`): `{b}` 中差异块的大小。
   - `{result_type}` (`'unified'|'indices'`, default: `'unified'`) Form of the returned diff:
+  - `{result_type}` (`'unified'|'indices'`, 默认值: `'unified'`) 返回的差异形式：
     - `unified`: String in unified format.
+    - `unified`: 统一格式的字符串。
     - `indices`: Array of hunk locations. **Note:** This option is ignored if `on_hunk` is used.
+    - `indices`: 差异块位置的数组。**注意：** 如果使用了 `on_hunk`，则此选项会被忽略。
   - `{linematch}` (`boolean|integer`) Run linematch on the resulting hunks from xdiff. When integer, only hunks upto this size in lines are run through linematch. Requires `result_type = indices`, ignored otherwise.
+  - `{linematch}` (`boolean|integer`) 对 xdiff 结果中的差异块运行 linematch。如果是整数，只有小于等于该值的差异块会运行 linematch。需要 `result_type = indices`，否则忽略。
   - `{algorithm}` (`'myers'|'minimal'|'patience'|'histogram'`, default: `'myers'`) Diff algorithm to use. Values:
+  - `{algorithm}` (`'myers'|'minimal'|'patience'|'histogram'`, 默认值: `'myers'`) 使用的差异算法。取值：
     - `myers`: the default algorithm
+    - `myers`: 默认算法
     - `minimal`: spend extra time to generate the smallest possible diff
+    - `minimal`: 花费更多时间生成最小的差异
     - `patience`: patience diff algorithm
+    - `patience`: 耐心差异算法
     - `histogram`: histogram diff algorithm
+    - `histogram`: 直方图差异算法
   - `{ctxlen}` (`integer`) Context length
+  - `{ctxlen}` (`integer`) 上下文长度
   - `{interhunkctxlen}` (`integer`) Inter hunk context length
+  - `{interhunkctxlen}` (`integer`) 差异块之间的上下文长度
   - `{ignore_whitespace}` (`boolean`) Ignore whitespace
+  - `{ignore_whitespace}` (`boolean`) 忽略空白字符
   - `{ignore_whitespace_change}` (`boolean`) Ignore whitespace change
+  - `{ignore_whitespace_change}` (`boolean`) 忽略空白字符的变化
   - `{ignore_whitespace_change_at_eol}` (`boolean`) Ignore whitespace change at end-of-line.
+  - `{ignore_whitespace_change_at_eol}` (`boolean`) 忽略行尾的空白字符变化
   - `{ignore_cr_at_eol}` (`boolean`) Ignore carriage return at end-of-line
+  - `{ignore_cr_at_eol}` (`boolean`) 忽略行尾的回车符
   - `{ignore_blank_lines}` (`boolean`) Ignore blank lines
+  - `{ignore_blank_lines}` (`boolean`) 忽略空白行
   - `{indent_heuristic}` (`boolean`) Use the indent heuristic for the internal diff library.
+  - `{indent_heuristic}` (`boolean`) 使用内部差异库的缩进启发式方法。
 
 Return:
 
 (`string|integer[]`) See `{opts.result_type}`. `nil` if `{opts.on_hunk}` is given.
+
+(`string|integer[]`) 参见 `{opts.result_type}`。如果使用了 `{opts.on_hunk}`，则返回 `nil`。
 
 ## VIM.MPACK
 
@@ -704,11 +1032,15 @@ Return:
 
 This module provides encoding and decoding of Lua objects to and from msgpack-encoded strings. Supports [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) and [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict()).
 
+​	此模块提供将 Lua 对象编码和解码为 msgpack 编码的字符串的功能。支持 [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) 和 [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict())。
+
 #### vim.mpack.decode(`{str}`)
 
  `vim.mpack.decode()`
 
 Decodes (or "unpacks") the msgpack-encoded `{str}` to a Lua object.
+
+​	将 msgpack 编码的 `{str}` 解码（或“解包”）为 Lua 对象。
 
 Parameters:
 
@@ -724,6 +1056,8 @@ Return:
 
 Encodes (or "packs") Lua object `{obj}` as msgpack in a Lua string.
 
+​	将 Lua 对象 `{obj}` 编码（或“打包”）为 msgpack 格式的 Lua 字符串。
+
 Parameters:
 
 `{obj}` (`any`)
@@ -738,17 +1072,27 @@ Return:
 
 This module provides encoding and decoding of Lua objects to and from JSON-encoded strings. Supports [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) and [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict()).
 
+​	此模块提供将 Lua 对象编码和解码为 JSON 编码的字符串的功能。支持 [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) 和 [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict())。
+
 #### vim.json.decode(`{str}`, `{opts}`) 
 
 `vim.json.decode()`
 
 Decodes (or "unpacks") the JSON-encoded `{str}` to a Lua object.
 
+​	将 JSON 编码的 `{str}` 解码（或“解包”）为 Lua 对象。
+
 - Decodes JSON "null" as [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) (controllable by `{opts}`, see below).
+
+- 将 JSON 的 "null" 解码为 [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL)（可通过 `{opts}` 控制，见下文）。
 
 - Decodes empty object as [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict()).
 
+- 将空对象解码为 [vim.empty_dict()](https://neovim.io/doc/user/lua.html#vim.empty_dict())。
+
 - Decodes empty array as `{}` (empty Lua table).
+
+- 将空数组解码为 `{}`（空的 Lua 表）。
 
 
 Example:
@@ -762,10 +1106,18 @@ Parameters:
 
 - `{str}` (`string`) Stringified JSON data.
 
+- `{str}` (`string`) JSON 格式的字符串数据。
+
 - `{opts}` (`table<string,any>?`) Options table with keys:
+  
+- `{opts}` (`table<string,any>?`) 带有以下键的可选参数表：
   - luanil: (table) Table with keys:
+  - luanil: (table) 含以下键的表：
     - object: (boolean) When true, converts `null` in JSON objects to Lua `nil` instead of [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL).
+    - object: (boolean) 若为 true，将 JSON 对象中的 `null` 转换为 Lua `nil`，而不是 [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL)。
     - array: (boolean) When true, converts `null` in JSON arrays to Lua `nil` instead of [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL).
+    - array: (boolean) 若为 true，将 JSON 数组中的 `null` 转换为 Lua `nil`，而不是 [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL)。
+  
 
 Return:
 
@@ -776,6 +1128,8 @@ Return:
 `vim.json.encode()`
 
 Encodes (or "packs") Lua object `{obj}` as JSON in a Lua string.
+
+​	将 Lua 对象 `{obj}` 编码（或“打包”）为 JSON 格式的 Lua 字符串。
 
 Parameters:
 
@@ -795,13 +1149,19 @@ Return:
 
 Decode a Base64 encoded string.
 
+​	解码一个 Base64 编码的字符串。
+
 Parameters:
 
 `{str}` (`string`) Base64 encoded string
 
+`{str}` (`string`) Base64 编码的字符串
+
 Return:
 
 (`string`) Decoded string
+
+(`string`) 解码后的字符串
 
 #### vim.base64.encode(`{str}`) 
 
@@ -809,13 +1169,19 @@ Return:
 
 Encode `{str}` using Base64.
 
+​	使用 Base64 对 `{str}` 进行编码
+
 Parameters:
 
 `{str}` (`string`) String to encode
 
+​	`{str}` (`string`) 要编码的字符串
+
 Return:
 
 (`string`) Encoded string
+
+(`string`) 编码后的字符串
 
 ## VIM.SPELL
 
@@ -827,9 +1193,15 @@ Return:
 
 Check `{str}` for spelling errors. Similar to the Vimscript function [spellbadword()](https://neovim.io/doc/user/builtin.html#spellbadword()).
 
+​	检查 `{str}` 是否有拼写错误。类似于 Vimscript 函数 [spellbadword()](https://neovim.io/doc/user/builtin.html#spellbadword())。
+
 **Note:** The behaviour of this function is dependent on: ['spelllang'](https://neovim.io/doc/user/options.html#'spelllang'), ['spellfile'](https://neovim.io/doc/user/options.html#'spellfile'), ['spellcapcheck'](https://neovim.io/doc/user/options.html#'spellcapcheck') and ['spelloptions'](https://neovim.io/doc/user/options.html#'spelloptions') which can all be local to the buffer. Consider calling this with [nvim_buf_call()](https://neovim.io/doc/user/api.html#nvim_buf_call()).
 
+​	**注意：** 该函数的行为依赖于以下选项：['spelllang'](https://neovim.io/doc/user/options.html#'spelllang')，['spellfile'](https://neovim.io/doc/user/options.html#'spellfile')，['spellcapcheck'](https://neovim.io/doc/user/options.html#'spellcapcheck') 和 ['spelloptions'](https://neovim.io/doc/user/options.html#'spelloptions')，这些选项可以在局部缓冲区中进行配置。建议使用 [nvim_buf_call()](https://neovim.io/doc/user/api.html#nvim_buf_call()) 调用此函数。
+
 Example:
+
+​	示例：
 
 ```lua
 vim.spell.check("the quik brown fox")
@@ -845,13 +1217,25 @@ Parameters:
 
 Return:
 
-(`[string, 'bad'|'rare'|'local'|'caps', integer][]`) List of tuples with three items:
+(`[string, 'bad'|'rare'|'local'|'caps', integer][]`) 
 
-The badly spelled word.
+List of tuples with three items:
 
-The type of the spelling error: "bad" spelling mistake "rare" rare word "local" word only valid in another region "caps" word should start with Capital
+​	返回一个包含三项的元组列表：
 
-The position in `{str}` where the word begins.
+- The badly spelled word.
+- 拼写错误的单词。
+- The type of the spelling error: 
+  - "bad" spelling mistake 
+  - "bad" 表示拼写错误
+  - "rare" rare word 
+  - "rare" 表示罕见单词
+  - "local" word only valid in another region 
+  - "local" 表示仅在其他地区有效的单词
+  - "caps" word should start with Capital
+  - "caps" 表示单词应该以大写字母开头
+- The position in `{str}` where the word begins.
+- `{str}` 中该单词开始的位置。
 
 ## VIM
 
@@ -863,6 +1247,8 @@ The position in `{str}` where the word begins.
 
 Invokes Nvim [API](https://neovim.io/doc/user/api.html#API) function `{func}` with arguments `{...}`. Example: call the "nvim_get_current_line()" API function:
 
+​	使用参数 `{...}` 调用 Nvim [API](https://neovim.io/doc/user/api.html#API) 函数 `{func}`。示例：调用 "nvim_get_current_line()" API 函数：
+
 ```lua
 print(tostring(vim.api.nvim_get_current_line()))
 ```
@@ -873,17 +1259,23 @@ print(tostring(vim.api.nvim_get_current_line()))
 
 Special value representing NIL in [RPC](https://neovim.io/doc/user/api.html#RPC) and [v:null](https://neovim.io/doc/user/vvars.html#v%3Anull) in Vimscript conversion, and similar cases. Lua `nil` cannot be used as part of a Lua table representing a Dictionary or Array, because it is treated as missing: `{"foo", nil}` is the same as `{"foo"}`.
 
+在 [RPC](https://neovim.io/doc/user/api.html#RPC) 中表示 NIL 的特殊值，也用于 Vimscript 转换中的 [v:null](https://neovim.io/doc/user/vvars.html#v%3Anull)等类似情况。Lua `nil` 不能用作 Lua 表的部分内容，因为它会被视为缺失值：`{"foo", nil}` 等同于 `{"foo"}`。
+
 #### vim.type_idx 
 
 `vim.type_idx`
 
 Type index for use in [lua-special-tbl](https://neovim.io/doc/user/lua.html#lua-special-tbl). Specifying one of the values from [vim.types](https://neovim.io/doc/user/lua.html#vim.types) allows typing the empty table (it is unclear whether empty Lua table represents empty list or empty array) and forcing integral numbers to be [Float](https://neovim.io/doc/user/eval.html#Float). See [lua-special-tbl](https://neovim.io/doc/user/lua.html#lua-special-tbl) for more details.
 
+​	用于 [lua-special-tbl](https://neovim.io/doc/user/lua.html#lua-special-tbl) 的类型索引。指定 [vim.types](https://neovim.io/doc/user/lua.html#vim.types) 中的一个值可以为空表类型化，并将整数强制转换为 [Float](https://neovim.io/doc/user/eval.html#Float)。更多细节见 [lua-special-tbl](https://neovim.io/doc/user/lua.html#lua-special-tbl)。
+
 #### vim.val_idx 
 
 `vim.val_idx`
 
 Value index for tables representing [Float](https://neovim.io/doc/user/eval.html#Float)s. A table representing floating-point value 1.0 looks like this:
+
+​	用于表示 [Float](https://neovim.io/doc/user/eval.html#Float) 的表的值索引。表示浮点值 1.0 的表如下所示：
 
 ```lua
 {
@@ -894,13 +1286,24 @@ Value index for tables representing [Float](https://neovim.io/doc/user/eval.html
 
 See also [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx) and [lua-special-tbl](https://neovim.io/doc/user/lua.html#lua-special-tbl).
 
+​	参见 [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx) 和 [lua-special-tbl](https://neovim.io/doc/user/lua.html#lua-special-tbl)。
+
 #### vim.types 
 
 `vim.types`
 
 Table with possible values for [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx). Contains two sets of key-value pairs: first maps possible values for [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx) to human-readable strings, second maps human-readable type names to values for [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx). Currently contains pairs for `float`, `array` and `dictionary` types.
 
-**Note:** One must expect that values corresponding to `vim.types.float`, `vim.types.array` and `vim.types.dictionary` fall under only two following assumptions: 1. Value may serve both as a key and as a value in a table. Given the properties of Lua tables this basically means “value is not `nil`”. 2. For each value in `vim.types` table `vim.types[vim.types[value]]` is the same as `value`. No other restrictions are put on types, and it is not guaranteed that values corresponding to `vim.types.float`, `vim.types.array` and `vim.types.dictionary` will not change or that `vim.types` table will only contain values for these three types.
+​	包含 [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx) 的可能值的表。包含两组键值对：第一组将 [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx) 的可能值映射为可读字符串，第二组将可读类型名映射为 [vim.type_idx](https://neovim.io/doc/user/lua.html#vim.type_idx) 的值。当前包含 `float`、`array` 和 `dictionary` 类型的键值对。
+
+**Note:** One must expect that values corresponding to `vim.types.float`, `vim.types.array` and `vim.types.dictionary` fall under only two following assumptions: 
+
+​	**注意：** 必须假设对应于 `vim.types.float`、`vim.types.array` 和 `vim.types.dictionary` 的值仅满足以下两个假设：
+
+1. Value may serve both as a key and as a value in a table. Given the properties of Lua tables this basically means “value is not `nil`”. 
+2. 值可以同时用作表中的键和值。鉴于 Lua 表的特性，这基本上意味着“值不为 `nil`”。
+3. For each value in `vim.types` table `vim.types[vim.types[value]]` is the same as `value`. No other restrictions are put on types, and it is not guaranteed that values corresponding to `vim.types.float`, `vim.types.array` and `vim.types.dictionary` will not change or that `vim.types` table will only contain values for these three types.
+4. 对于 `vim.types` 表中的每个值，`vim.types[vim.types[value]]` 与 `value` 相同。没有对类型的其他限制，不能保证对应于 `vim.types.float`、`vim.types.array` 和 `vim.types.dictionary` 的值不会改变，也不能保证 `vim.types` 表只包含这三种类型的值。
 
 #### vim.log.levels 
 
@@ -908,7 +1311,14 @@ Table with possible values for [vim.type_idx](https://neovim.io/doc/user/lua.htm
 
 Log levels are one of the values defined in `vim.log.levels`:
 
-vim.log.levels.DEBUG vim.log.levels.ERROR vim.log.levels.INFO vim.log.levels.TRACE vim.log.levels.WARN vim.log.levels.OFF
+​	日志级别是 `vim.log.levels` 中定义的值之一：
+
+- vim.log.levels.DEBUG
+- vim.log.levels.ERROR
+- vim.log.levels.INFO
+- vim.log.levels.TRACE
+- vim.log.levels.WARN
+- vim.log.levels.OFF
 
 #### vim.empty_dict() 
 
@@ -916,9 +1326,15 @@ vim.log.levels.DEBUG vim.log.levels.ERROR vim.log.levels.INFO vim.log.levels.TRA
 
 Creates a special empty table (marked with a metatable), which Nvim converts to an empty dictionary when translating Lua values to Vimscript or API types. Nvim by default converts an empty table `{}` without this metatable to an list/array.
 
+​	创建一个特殊的空表（带有元表），当 Nvim 将 Lua 值转换为 Vimscript 或 API 类型时，该空表会被转换为一个空字典。默认情况下，Nvim 将不带此元表的空表 `{}` 转换为列表/数组。
+
 **Note:** If numeric keys are present in the table, Nvim ignores the metatable marker and converts the dict to a list/array anyway.
 
+​	**注意：** 如果表中存在数字键，Nvim 会忽略元表标记，并将字典转换为列表/数组。
+
 Return:
+
+​	返回值：
 
 (`table`)
 
@@ -928,16 +1344,23 @@ Return:
 
 The result is a String, which is the text `{str}` converted from encoding `{from}` to encoding `{to}`. When the conversion fails `nil` is returned. When some characters could not be converted they are replaced with "?". The encoding names are whatever the iconv() library function can accept, see ":Man 3 iconv".
 
+​	返回一个字符串，该字符串是 `{str}` 从 `{from}` 编码转换为 `{to}` 编码后的结果。如果转换失败，返回 `nil`。如果某些字符无法转换，它们会被替换为 "?"。编码名称是 iconv() 库函数可以接受的内容，参见  ":Man 3 iconv"。
+
 Parameters:
 
 - `{str}` (`string`) Text to convert
 
 - `{from}` (`string`) Encoding of `{str}`
 - `{to}` (`string`) Target encoding
+- `{str}` (`string`) 要转换的文本
+- `{from}` (`string`) `{str}` 的编码
+- `{to}` (`string`) 目标编码
 
 Return:
 
 (`string?`) Converted string if conversion succeeds, `nil` otherwise.
+
+​	(`string?`) 如果转换成功，返回转换后的字符串，否则返回 `nil`。
 
 #### vim.in_fast_event() 
 
@@ -945,13 +1368,19 @@ Return:
 
 Returns true if the code is executing as part of a "fast" event handler, where most of the API is disabled. These are low-level events (e.g. [lua-loop-callbacks](https://neovim.io/doc/user/lua.html#lua-loop-callbacks)) which can be invoked whenever Nvim polls for input. When this is `false` most API functions are callable (but may be subject to other restrictions such as [textlock](https://neovim.io/doc/user/eval.html#textlock)).
 
+​	如果代码正在作为 "快速" 事件处理程序的一部分执行，则返回 true，此时大部分 API 是不可用的。这些是低级事件（例如 [lua-loop-callbacks](https://neovim.io/doc/user/lua.html#lua-loop-callbacks)），可以在 Nvim 轮询输入时调用。如果此值为 `false`，则大多数 API 函数是可调用的（但可能会受到其他限制，如 [textlock](https://neovim.io/doc/user/eval.html#textlock)）。
+
 #### vim.rpcnotify(`{channel}`, `{method}`, `{...}`)
 
  `vim.rpcnotify()`
 
 Sends `{event}` to `{channel}` via [RPC](https://neovim.io/doc/user/api.html#RPC) and returns immediately. If `{channel}` is 0, the event is broadcast to all channels.
 
+​	通过 [RPC](https://neovim.io/doc/user/api.html#RPC) 向 `{channel}` 发送 `{event}`，并立即返回。如果 `{channel}` 为 0，则事件会广播到所有频道。
+
 This function also works in a fast callback [lua-loop-callbacks](https://neovim.io/doc/user/lua.html#lua-loop-callbacks).
+
+​	此函数也可以在快速回调中使用 [lua-loop-callbacks](https://neovim.io/doc/user/lua.html#lua-loop-callbacks)。
 
 Parameters:
 
@@ -967,7 +1396,11 @@ Parameters:
 
 Sends a request to `{channel}` to invoke `{method}` via [RPC](https://neovim.io/doc/user/api.html#RPC) and blocks until a response is received.
 
+​	通过 [RPC](https://neovim.io/doc/user/api.html#RPC) 向 `{channel}` 发送请求以调用 `{method}`，并阻塞直到收到响应。
+
 **Note:** NIL values as part of the return value is represented as [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) special value
+
+​	**注意：** 返回值中的 NIL 值将表示为 [vim.NIL](https://neovim.io/doc/user/lua.html#vim.NIL) 特殊值。
 
 Parameters:
 
@@ -983,6 +1416,8 @@ Parameters:
 
 Schedules `{fn}` to be invoked soon by the main event-loop. Useful to avoid [textlock](https://neovim.io/doc/user/eval.html#textlock) or other temporary restrictions.
 
+​	安排 `{fn}` 将由主事件循环很快调用。适用于避免 [textlock](https://neovim.io/doc/user/eval.html#textlock) 或其他临时限制。
+
 Parameters:
 
 `{fn}` (`fun()`)
@@ -993,7 +1428,11 @@ Parameters:
 
 Convert UTF-32 or UTF-16 `{index}` to byte index. If `{use_utf16}` is not supplied, it defaults to false (use UTF-32). Returns the byte index.
 
+​	将 UTF-32 或 UTF-16 `{index}` 转换为字节索引。如果未提供 `{use_utf16}`，则默认为 false（使用 UTF-32）。返回字节索引。
+
 Invalid UTF-8 and NUL is treated like in [vim.str_utfindex()](https://neovim.io/doc/user/lua.html#vim.str_utfindex()). An `{index}` in the middle of a UTF-16 sequence is rounded upwards to the end of that sequence.
+
+​	无效的 UTF-8 和 NUL 将按照 [vim.str_utfindex()](https://neovim.io/doc/user/lua.html#vim.str_utfindex()) 的处理方式处理。处于 UTF-16 序列中间的 `{index}` 将被向上舍入到该序列的末尾。
 
 Parameters:
 
